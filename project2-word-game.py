@@ -4,6 +4,7 @@ import random
 import colordict
 
 def open_quotes(filename, phrases=None):
+    '''Open a file that contains a list of 3 word phrases to guess in the game'''
     try:
         with open(filename, 'r') as file:
             for line in file:
@@ -16,48 +17,53 @@ def open_quotes(filename, phrases=None):
         return False
 
 
-def find_letter_positions(letter, string):
-    positions = [match.start() for match in re.finditer(re.escape(letter), string)]
+def get_letter_positions(letter, string):
+    '''Return an array with the list of positions of a character in a string, case insensitive'''
+    positions = [index for index, char in enumerate(string) if char.lower() == letter.lower()]
     return positions
 
 
-quotes_array = []
-if not open_quotes('phrases.txt', quotes_array):
-    print('Could not open quotes.json file, cannot continue.')
-    exit(1)
-#else:
-    #print(quotes_array)
+if __name__ == '__main__':
+    quotes_array = []
+    if not open_quotes('phrases.txt', quotes_array):
+        print('Could not open quotes.json file, cannot continue.')
+        exit(1)
+    #else:
+        #print(quotes_array)
 
-phrase_position = random.randint(0, len(quotes_array))
-#print('position: ',phrase_position)
-phrase = quotes_array[phrase_position]
-#print('Phrase: ',phrase)
+    # choose a random phrase from the file
+    phrase = quotes_array[ random.randint(0, len(quotes_array)) ]
+    # Make the string with the underscore instead of the letters in the phrase
+    placeholder = re.sub(r'\S', '_', phrase)
 
-placeholder = re.sub(r'\S', '_', phrase)
-points = 0
-while True:
-    print(f"-> {colordict.clrs['BLUE']['B']}{placeholder}{colordict.clr_reset}")
-    #print(f"-----> {placeholder}")
-    if '_' not in placeholder:
-        break
-
+    points = 0
+    tries = [] # array that will contain all the previous guesses
     while True:
-        letter = input(f"{colordict.clrs['GREEN']['F']}Enter letter: {colordict.clr_reset}")
-        if len(letter) == 1:
+        print(f"-> {colordict.clrs['BLUE' if '_' in placeholder else 'GREEN']['B']}{placeholder}{colordict.clrs['RESET']['B']}")
+        if '_' not in placeholder:
             break
-        print(f"{colordict.clrs['RED']['B']}*** just type a letter, avoid responses with more than 1 character{colordict.clr_reset}")
 
-    if letter.lower() in placeholder.lower():
-        print((f"{colordict.clrs['RED']['B']}*** letter already guessed{colordict.clr_reset}"))
-        continue
+        while True: # iterate input until receiving a single character
+            letter = input(f"{colordict.clrs['GREEN']['F']}Enter letter: {colordict.clr_reset}")
+            if len(letter) == 1:
+                break
+            print(f"{colordict.clrs['RED']['B']}*** just type a letter, avoid responses with more than 1 character{colordict.clrs['RESET']['B']}")
 
-    if letter.lower() in phrase.lower():
-        points += 5
-        letter_positions = find_letter_positions(letter.lower(), phrase.lower())
-        for n in letter_positions:
-            placeholder = placeholder[:n] + phrase[n] + placeholder[n+1:]
-    else:
-        print(f"{colordict.clrs['RED']['B']}Letter \"{letter}\" is a wrong guess{colordict.clr_reset}")
-        points = max(0, points - 1)
+        letter_l = letter.lower()
+        if letter_l in placeholder.lower() or letter_l in tries:
+            print((f"{colordict.clrs['RED']['B']}*** letter already " + ('tried' if letter in tries else 'guessed') + colordict.clrs['RESET']['B']))
+            continue
 
-print(f'You guessed it! Points received: {points}')
+        if letter_l not in tries:
+            tries.append(letter_l)
+
+        letter_positions = get_letter_positions(letter, phrase)
+        if letter_positions:
+            points += 5
+            for n in letter_positions:
+                placeholder = placeholder[:n] + phrase[n] + placeholder[n+1:]
+        else:
+            points = max(0, points - 1)
+            print(f"{colordict.clrs['RED']['B']}Letter \"{letter}\" is a wrong guess{colordict.clrs['RESET']['B']}")
+
+    print(f'You guessed it! Points received: {points}')
