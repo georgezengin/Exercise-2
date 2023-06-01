@@ -1,6 +1,7 @@
 import re
 import json
 import random
+import time
 import colordict
 
 def open_quotes(filename, phrases=None):
@@ -38,6 +39,7 @@ if __name__ == '__main__':
 
     points = 0
     tries = [] # array that will contain all the previous guesses
+    time_start = time.time()
     while True:
         print(f"-> {colordict.clrs['BLUE' if '_' in placeholder else 'GREEN']['B']}{placeholder}{colordict.clrs['RESET']['B']}")
         if '_' not in placeholder:
@@ -66,4 +68,12 @@ if __name__ == '__main__':
             points = max(0, points - 1)
             print(f"{colordict.clrs['RED']['B']}Letter \"{letter}\" is a wrong guess{colordict.clrs['RESET']['B']}")
 
-    print(f'You guessed it! Points received: {points}')
+    time_end = time.time()
+    timepassed = int(time_end - time_start)
+
+    extrapoints = 100 if timepassed <= 30 else 0
+
+    print(f"{colordict.clrs['BLUE']['B']}You guessed it! Points received: {points+extrapoints}{colordict.clrs['RESET']['B']}")
+    print()
+    if extrapoints:
+        print(f"{colordict.clrs['RED']['B']}Done in just {timepassed} seconds!!! Extra 100 points for you!{colordict.clrs['RESET']['B']}")
