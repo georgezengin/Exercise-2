@@ -4,6 +4,9 @@ import random
 import time
 import colordict
 
+xtrapoints = 100
+timeout = 30
+
 def open_quotes(filename, phrases=None):
     '''Open a file that contains a list of 3 word phrases to guess in the game'''
     try:
@@ -25,6 +28,9 @@ def get_letter_positions(letter, string):
 
 
 if __name__ == '__main__':
+    global xtrapoints
+    global timeout
+
     quotes_array = []
     if not open_quotes('phrases.txt', quotes_array):
         print('Could not open quotes.json file, cannot continue.')
@@ -71,7 +77,7 @@ if __name__ == '__main__':
     time_end = time.time()
     timepassed = int(time_end - time_start)
 
-    extrapoints = 100 if timepassed <= 30 else 0
+    extrapoints = xtrapoints if timepassed <= timeout else 0
 
     print(f"{colordict.clrs['BLUE']['B']}You guessed it! Points received: {points+extrapoints}{colordict.clrs['RESET']['B']}")
     print()

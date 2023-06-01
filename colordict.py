@@ -10,6 +10,25 @@ colordict = {
     'RESET': {'F': '\033[39m', 'B': '\033[49m'},
     'FULLRESET': {'\033[0m' }
 }
-
 clrs = colordict
 clr_reset = colordict['RESET']['F'] + colordict['RESET']['B']
+
+bblack = colordict['BLACK']['B']
+bred   = colordict['RED']['B']
+bgreen = colordict['GREEN']['B']
+byellow = colordict['YELLOW']['B']
+bblue = colordict['BLUE']['B']
+bmagenta = colordict['MAGENTA']['B']
+bcyan = colordict['CYAN']['B']
+bwhite = colordict['WHITE']['B']
+breset = colordict['RESET']['B']
+
+fblack = colordict['BLACK']['F']
+fred   = colordict['RED']['F']
+fgreen = colordict['GREEN']['F']
+fyellow = colordict['YELLOW']['F']
+fblue = colordict['BLUE']['F']
+fmagenta = colordict['MAGENTA']['F']
+fcyan = colordict['CYAN']['F']
+fwhite = colordict['WHITE']['F']
+freset = colordict['RESET']['F']
