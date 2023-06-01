@@ -55,13 +55,12 @@ hangman_stages = [
 def open_quotes(filename, phrases=None):
     '''Open a file that contains a list of 3 word phrases to guess in the game'''
     try:
-        with open(filename, 'r') as file:
+        with open(filename, 'r+') as file:
             for line in file:
                 phrases.append(line.strip())
             #print(phrases)
         return True
     except (OSError):
-        # This will catch if json file does not exist and create it at the end
         phrases = []
         return False
 
@@ -75,7 +74,7 @@ def get_letter_positions(letter, string):
 if __name__ == '__main__':
     quotes_array = []
     if not open_quotes('phrases.txt', quotes_array):
-        print('Could not open quotes.json file, cannot continue.')
+        print('Could not open phrases.txt file, cannot continue.')
         exit(1)
 
     # choose a random phrase from the file
@@ -85,16 +84,16 @@ if __name__ == '__main__':
 
     points = 0
     tries = [] # array that will contain all the previous guesses
-    error_guess = []
+    error_guess = ''
     time_start = time.time()
     while True:
-        print(hangman_stages[len(error_guess)])
-        print(f"-> {colordict.bblue if '_' in placeholder else colordict.bgreen}{placeholder}{colordict.breset}")
+        #print(hangman_stages[len(error_guess)])
+        print(f"{colordict.bblue if '_' in placeholder else colordict.bgreen} {placeholder} {colordict.breset}")
         if '_' not in placeholder:
             break
 
         while True: # iterate input until receiving a single character
-            letter = input(f"{colordict.clrs['GREEN']['F']}Enter letter: {colordict.clr_reset}")
+            letter = input(f"{colordict.fgreen}Enter letter: {colordict.clr_reset}")
             if len(letter) == 1:
                 break
             print(f"{colordict.bred}*** just type a letter, avoid responses with more than 1 character{colordict.breset}")
@@ -114,9 +113,10 @@ if __name__ == '__main__':
                 placeholder = placeholder[:n] + phrase[n] + placeholder[n+1:]
         else:
             points = max(0, points - 1)
-            error_guess.append(letter)
+            error_guess += letter
             print(f"{colordict.bred}Letter \"{letter}\" is a wrong guess{colordict.breset}")
-            print(f"Wrong guesses: {error_guess}")
+            print(f"Wrong guesses: {' '.join(g for g in error_guess)}")
+            print(hangman_stages[len(error_guess)])
             if len(error_guess) >= len(hangman_stages)-1:
                 break
 
@@ -127,10 +127,14 @@ if __name__ == '__main__':
 
     if len(error_guess) < len(hangman_stages)-1:
         print(f'\n{colordict.bgreen} *** YOU WIN *** YOUR MAN IS ALIVE *** {colordict.breset}')
-        print(f"{colordict.bblue}Points received: {points+extrapoints}{colordict.breset}")
-        print()
         if extrapoints:
-            print(f"{colordict.bred}And you did it in just {timepassed} seconds!!! Get an extra 100 points for you!{colordict.breset}")
+            print(f"\n{colordict.bred}And you did it in just {timepassed} seconds so you get 100 extra points!{colordict.breset}\n")
+        else:
+            print(f'\nGuessed in {timepassed} seconds')
+        print(f"{colordict.bblue}Points received: {points+extrapoints}{colordict.breset}")
     else:
         print(f'\n{colordict.bred}{hangman_stages[len(error_guess)]}{colordict.breset}')
         print(f'\n{colordict.bred} *** YOU LOST *** YOUR MAN IS DEAD *** {colordict.breset}')
+        print(f'Phrase to guess was "{phrase}"')
+
+    print()
