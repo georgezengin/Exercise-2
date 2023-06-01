@@ -28,9 +28,6 @@ def get_letter_positions(letter, string):
 
 
 if __name__ == '__main__':
-    global xtrapoints
-    global timeout
-
     quotes_array = []
     if not open_quotes('phrases.txt', quotes_array):
         print('Could not open quotes.json file, cannot continue.')
@@ -47,7 +44,7 @@ if __name__ == '__main__':
     tries = [] # array that will contain all the previous guesses
     time_start = time.time()
     while True:
-        print(f"-> {colordict.clrs['BLUE' if '_' in placeholder else 'GREEN']['B']}{placeholder}{colordict.clrs['RESET']['B']}")
+        print(f"-> {colordict.bblue if '_' in placeholder else colordict.bgreen}{placeholder}{colordict.breset}")
         if '_' not in placeholder:
             break
 
@@ -55,11 +52,11 @@ if __name__ == '__main__':
             letter = input(f"{colordict.clrs['GREEN']['F']}Enter letter: {colordict.clr_reset}")
             if len(letter) == 1:
                 break
-            print(f"{colordict.clrs['RED']['B']}*** just type a letter, avoid responses with more than 1 character{colordict.clrs['RESET']['B']}")
+            print(f"{colordict.bred}*** just type a letter, avoid responses with more than 1 character{colordict.breset}")
 
         letter_l = letter.lower()
         if letter_l in placeholder.lower() or letter_l in tries:
-            print((f"{colordict.clrs['RED']['B']}*** letter already " + ('tried' if letter in tries else 'guessed') + colordict.clrs['RESET']['B']))
+            print((f"{colordict.bred}*** letter already " + ('tried' if letter in tries else 'guessed') + colordict.breset))
             continue
 
         if letter_l not in tries:
@@ -72,14 +69,14 @@ if __name__ == '__main__':
                 placeholder = placeholder[:n] + phrase[n] + placeholder[n+1:]
         else:
             points = max(0, points - 1)
-            print(f"{colordict.clrs['RED']['B']}Letter \"{letter}\" is a wrong guess{colordict.clrs['RESET']['B']}")
+            print(f"{colordict.bred}Letter \"{letter}\" is a wrong guess{colordict.breset}")
 
     time_end = time.time()
     timepassed = int(time_end - time_start)
 
     extrapoints = xtrapoints if timepassed <= timeout else 0
 
-    print(f"{colordict.clrs['BLUE']['B']}You guessed it! Points received: {points+extrapoints}{colordict.clrs['RESET']['B']}")
+    print(f"{colordict.bblue}You guessed it! Points received: {points+extrapoints}{colordict.breset}")
     print()
     if extrapoints:
-        print(f"{colordict.clrs['RED']['B']}Done in just {timepassed} seconds!!! Extra 100 points for you!{colordict.clrs['RESET']['B']}")
+        print(f"{colordict.bred}Done in just {timepassed} seconds!!! Extra 100 points for you!{colordict.breset}")
