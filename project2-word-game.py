@@ -6,6 +6,51 @@ import colordict
 
 xtrapoints = 100
 timeout = 30
+hangman_stages = [
+    '''
+       +---+
+           |
+           |
+           |
+          ===''',
+    '''
+       +---+
+       O   |
+           |
+           |
+          ===''',
+    '''
+       +---+
+       O   |
+       |   |
+           |
+          ===''',
+    '''
+       +---+
+       O   |
+      /|   |
+           |
+          ===''',
+    '''
+       +---+
+       O   |
+      /|\\  |
+           |
+          ===''',
+    '''
+       +---+
+       O   |
+      /|\\  |
+      /    |
+          ===''',
+    '''
+       +---+
+       O   |
+      /|\\  |
+      / \\  |
+          ==='''
+]
+
 
 def open_quotes(filename, phrases=None):
     '''Open a file that contains a list of 3 word phrases to guess in the game'''
@@ -32,8 +77,6 @@ if __name__ == '__main__':
     if not open_quotes('phrases.txt', quotes_array):
         print('Could not open quotes.json file, cannot continue.')
         exit(1)
-    #else:
-        #print(quotes_array)
 
     # choose a random phrase from the file
     phrase = quotes_array[ random.randint(0, len(quotes_array)) ]
@@ -42,8 +85,10 @@ if __name__ == '__main__':
 
     points = 0
     tries = [] # array that will contain all the previous guesses
+    error_guess = []
     time_start = time.time()
     while True:
+        print(hangman_stages[len(error_guess)])
         print(f"-> {colordict.bblue if '_' in placeholder else colordict.bgreen}{placeholder}{colordict.breset}")
         if '_' not in placeholder:
             break
@@ -69,14 +114,23 @@ if __name__ == '__main__':
                 placeholder = placeholder[:n] + phrase[n] + placeholder[n+1:]
         else:
             points = max(0, points - 1)
+            error_guess.append(letter)
             print(f"{colordict.bred}Letter \"{letter}\" is a wrong guess{colordict.breset}")
+            print(f"Wrong guesses: {error_guess}")
+            if len(error_guess) >= len(hangman_stages)-1:
+                break
 
     time_end = time.time()
     timepassed = int(time_end - time_start)
 
     extrapoints = xtrapoints if timepassed <= timeout else 0
 
-    print(f"{colordict.bblue}You guessed it! Points received: {points+extrapoints}{colordict.breset}")
-    print()
-    if extrapoints:
-        print(f"{colordict.bred}Done in just {timepassed} seconds!!! Extra 100 points for you!{colordict.breset}")
+    if len(error_guess) < len(hangman_stages)-1:
+        print(f'\n{colordict.bgreen} *** YOU WIN *** YOUR MAN IS ALIVE *** {colordict.breset}')
+        print(f"{colordict.bblue}Points received: {points+extrapoints}{colordict.breset}")
+        print()
+        if extrapoints:
+            print(f"{colordict.bred}And you did it in just {timepassed} seconds!!! Get an extra 100 points for you!{colordict.breset}")
+    else:
+        print(f'\n{colordict.bred}{hangman_stages[len(error_guess)]}{colordict.breset}')
+        print(f'\n{colordict.bred} *** YOU LOST *** YOUR MAN IS DEAD *** {colordict.breset}')
