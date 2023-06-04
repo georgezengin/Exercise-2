@@ -50,7 +50,14 @@ hangman_stages = [
       / \\  |
           ==='''
 ]
-
+alive =     '''
+       +---+
+           |
+      \\O/  |
+       |    |
+      / \\ ===
+      '''
+          
 
 def open_quotes(filename, phrases=None):
     '''Open a file that contains a list of 3 word phrases to guess in the game'''
@@ -116,9 +123,10 @@ if __name__ == '__main__':
             error_guess += letter
             print(f"{colordict.bred}Letter \"{letter}\" is a wrong guess{colordict.breset}")
             print(f"Wrong guesses: {' '.join(g for g in error_guess)}")
-            print(hangman_stages[len(error_guess)])
             if len(error_guess) >= len(hangman_stages)-1:
                 break
+            else:
+                print(hangman_stages[len(error_guess)])
 
     time_end = time.time()
     timepassed = int(time_end - time_start)
@@ -126,6 +134,7 @@ if __name__ == '__main__':
     extrapoints = xtrapoints if timepassed <= timeout else 0
 
     if len(error_guess) < len(hangman_stages)-1:
+        print(f'\n{colordict.bgreen}{alive}{colordict.breset}')
         print(f'\n{colordict.bgreen} *** YOU WIN *** YOUR MAN IS ALIVE *** {colordict.breset}')
         if extrapoints:
             print(f"\n{colordict.bred}And you did it in just {timepassed} seconds so you get 100 extra points!{colordict.breset}\n")
