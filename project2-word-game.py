@@ -5,6 +5,7 @@ import time
 import colordict
 
 xtrapoints = 100
+noerrorxtra = 50
 timeout = 30
 hangman_stages = [
     '''
@@ -131,16 +132,21 @@ if __name__ == '__main__':
     time_end = time.time()
     timepassed = int(time_end - time_start)
 
-    extrapoints = xtrapoints if timepassed <= timeout else 0
+    extrapoints  = xtrapoints  if timepassed <= timeout else 0
+    extrapoints += (noerrorxtra if len(error_guess) == 0 else 0)
 
     if len(error_guess) < len(hangman_stages)-1:
         print(f'\n{colordict.bgreen}{alive}{colordict.breset}')
-        print(f'\n{colordict.bgreen} *** YOU WIN *** YOUR MAN IS ALIVE *** {colordict.breset}')
+        print(f'\n{colordict.bgreen} *** YOU WIN *** YOUR MAN IS ALIVE *** {colordict.breset}\n')
         if extrapoints:
-            print(f"\n{colordict.bred}And you did it in just {timepassed} seconds so you get 100 extra points!{colordict.breset}\n")
+            print(f"{colordict.bred}Fast bonus: +{xtrapoints} since you did it in just {timepassed} seconds!{colordict.breset}")
         else:
-            print(f'\nGuessed in {timepassed} seconds')
-        print(f"{colordict.bblue}Points received: {points+extrapoints}{colordict.breset}")
+            print(f"Guessed in {timepassed} seconds")
+        
+        if len(error_guess) == 0:
+            print(f"{colordict.bred}No error bonus: +{noerrorxtra}{colordict.breset}")
+
+        print(f"\n{colordict.bblue}Points received: {points+extrapoints}{colordict.breset}")
     else:
         print(f'\n{colordict.bred}{hangman_stages[len(error_guess)]}{colordict.breset}')
         print(f'\n{colordict.bred} *** YOU LOST *** YOUR MAN IS DEAD *** {colordict.breset}')
