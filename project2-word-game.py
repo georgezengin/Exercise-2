@@ -55,7 +55,7 @@ alive =     '''
        +---+
            |
       \\O/  |
-       |    |
+       |   |
       / \\ ===
       '''
           
@@ -150,6 +150,4 @@ if __name__ == '__main__':
     else:
         print(f'\n{colordict.bred}{hangman_stages[len(error_guess)]}{colordict.breset}')
         print(f'\n{colordict.bred} *** YOU LOST *** YOUR MAN IS DEAD *** {colordict.breset}')
-        print(f'Phrase to guess was "{phrase}"')
-
-    print()
+        print(f'\n{colordict.bred} Phrase was [{phrase}]{colordict.breset}')
