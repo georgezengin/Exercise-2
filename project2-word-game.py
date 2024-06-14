@@ -86,7 +86,12 @@ if __name__ == '__main__':
         exit(1)
 
     # choose a random phrase from the file
-    phrase = quotes_array[ random.randint(0, len(quotes_array)) ]
+    while True:
+        i = random.randint(0, len(quotes_array)-1)
+        if not( quotes_array[i] is None):
+            phrase = quotes_array[ i ]
+            break
+    
     # Make the string with the underscore instead of the letters in the phrase
     placeholder = re.sub(r'\S', '_', phrase)
 
